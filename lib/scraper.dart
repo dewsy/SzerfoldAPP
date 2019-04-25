@@ -5,6 +5,7 @@ import 'daily.dart';
 
 Future<List<String>> getInfo(int start) async {
   List<String> links = await getLinks(start);
+  return links;
 }
 
 String subtractLink(String outerHtml) {
@@ -23,6 +24,7 @@ Future<List<String>> getLinks(int start) async {
   return dailies;
 }
 
+//TODO: Implement streams to get actual data from the links
 Future<List<Daily>> getDailies(List<String> links) async {
 
 }
