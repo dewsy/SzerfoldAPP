@@ -1,7 +1,11 @@
-class Daily{
-int counter, id;
-String message, pray, title, verse, date;
+class Daily {
 
-Daily({this.id, this.counter, this.date, this.message, this.pray, this.title, this.verse});
+  String title;
+  DateTime date;
+  String quote;
+  String toughts;
+  String prayer;
+
+  Daily(this.title, this.date, this.quote, this.toughts, this.prayer);
 
 }
