@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'scraper.dart';
+import 'daily.dart';
 
 void main() => runApp(MyApp());
 
@@ -34,7 +35,7 @@ class _MyHomePageState extends State<MyHomePage> {
   Widget build(BuildContext context) {
     return FutureBuilder(
       future: getInfo(0),
-      builder: (BuildContext context, AsyncSnapshot<List<String>> snapshot) {
+      builder: (BuildContext context, AsyncSnapshot<List<Daily>> snapshot) {
         if (snapshot.hasData) {
         return Scaffold(
       appBar: AppBar(
@@ -46,10 +47,28 @@ class _MyHomePageState extends State<MyHomePage> {
               itemBuilder: (BuildContext context, int index) {
                 return Column(
                   children: <Widget>[
-                    Text(snapshot.data[index]),
+                    Text(snapshot.data[index].title),
                     Divider(
-                      height: 2.0,
-                    ),
+                      height: 2.0),
+                      Text(snapshot.data[index].date),
+                    Divider(
+                      height: 2.0),
+                      Text(snapshot.data[index].quote),
+                    Divider(
+                      height: 2.0),
+                      Text(snapshot.data[index].verse),
+                    Divider(
+                      height: 2.0),
+                      Text(snapshot.data[index].toughts),
+                    Divider(
+                      height: 2.0),
+                      Text(snapshot.data[index].prayer),
+                    Divider(
+                      height: 2.0),
+                    Divider(
+                      height: 2.0),
+                    Divider(
+                      height: 2.0),
                   ],
                 );
               },
