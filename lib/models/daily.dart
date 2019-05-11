@@ -1,12 +1,7 @@
 class Daily {
-
   String title;
   String date;
-  String quote;
-  String verse;
-  String toughts;
-  String prayer;
+  String html;
 
-  Daily(this.title, this.date, this.quote, this.verse, this.toughts, this.prayer);
-
+  Daily(this.title, this.date, this.html);
 }

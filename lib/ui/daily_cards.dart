@@ -2,6 +2,8 @@ import 'package:flutter/material.dart';
 import '../blocs/daily_bloc.dart';
 import '../models/daily.dart';
 
+import 'package:flutter_html/flutter_html.dart';
+
 class DailyCards extends StatelessWidget {
   final int pageNumber = 0;
   final List<Daily> dailies = List<Daily>();
@@ -18,21 +20,8 @@ class DailyCards extends StatelessWidget {
               padding: EdgeInsets.all(8.0),
               itemCount: dailies.length,
               itemBuilder: (BuildContext context, int index) {
-                return Column(
-                  children: <Widget>[
-                    Text(dailies[index].title),
-                    Divider(height: 2.0),
-                    Text(dailies[index].date),
-                    Divider(height: 2.0),
-                    Text(dailies[index].quote),
-                    Divider(height: 2.0),
-                    Text(dailies[index].verse),
-                    Divider(height: 2.0),
-                    Text(dailies[index].toughts),
-                    Divider(height: 2.0),
-                    Text(dailies[index].prayer),
-                    Divider(height: 6.0),
-                  ],
+                return Html(
+                  data: dailies[index].html
                 );
               },
             );
