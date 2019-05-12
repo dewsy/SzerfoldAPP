@@ -46,7 +46,7 @@ class Scraper {
   }
 
   DateTime _convertToDate(String dateString) {
-    int year = int.parse(dateString.substring(0, 3));
+    int year = int.parse(dateString.substring(0, 4));
     int month = _getMonth(dateString);
     int day = int.parse(dateString.substring(12, 14));
     return DateTime(year, month, day);

@@ -58,7 +58,8 @@ class DailyCardsState extends State<DailyCards> {
           child: Column(
             children: <Widget>[
               Text(daily.title),
-              Text(daily.date.toString()),
+              Text(
+                  '${daily.date.year}-${daily.date.month}-${daily.date.day}'),
               Html(data: daily.html)
             ],
           )),
