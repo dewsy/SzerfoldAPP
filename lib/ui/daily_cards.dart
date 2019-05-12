@@ -5,17 +5,15 @@ import '../models/daily.dart';
 import 'package:flutter_html/flutter_html.dart';
 
 class DailyCards extends StatefulWidget {
-
-@override
-State<StatefulWidget> createState() {
-return DailyCardsState();
-}
+  @override
+  State<StatefulWidget> createState() {
+    return DailyCardsState();
+  }
 }
 
 class DailyCardsState extends State<DailyCards> {
-
   @override
-  void initState() { 
+  void initState() {
     super.initState();
     bloc.collectDailies(pageNumber);
   }
@@ -36,6 +34,7 @@ class DailyCardsState extends State<DailyCards> {
         builder: (context, AsyncSnapshot<Daily> snapshot) {
           if (snapshot.hasData) {
             dailies.add(snapshot.data);
+            dailies.sort((a, b) => b.date.compareTo(a.date));
             return ListView.builder(
               padding: EdgeInsets.all(8.0),
               itemCount: dailies.length,
@@ -50,16 +49,19 @@ class DailyCardsState extends State<DailyCards> {
   }
 
   Widget _cardBuilder(Daily daily) {
-      return Card(
-        elevation: 4,
-        shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(10)),
-        child: Container(
+    return Card(
+      elevation: 4,
+      shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(10)),
+      child: Container(
           width: 200,
           height: 300,
-          child: Html(
-            data: daily.html,
-          ),
-        ),
-      );
+          child: Column(
+            children: <Widget>[
+              Text(daily.title),
+              Text(daily.date.toString()),
+              Html(data: daily.html)
+            ],
+          )),
+    );
   }
 }

@@ -4,11 +4,6 @@ import 'package:html/dom.dart';
 import '../models/daily.dart';
 
 class Scraper {
-  Future<List<Daily>> getInfo(int start) async {
-    List<String> links = await getLinks(start);
-    return _getDailies(links);
-  }
-
   String _subtractLink(String outerHtml) {
     List<String> split = outerHtml.split('"');
     return "http://szeretetfoldje.hu" + split[1];
@@ -22,7 +17,7 @@ class Scraper {
       List<Element> elements = document.querySelectorAll('.item-page-title a');
       List<String> dailies = List();
       for (Element element in elements) {
-        dailies.add(_subtractLink(element.outerHtml));
+        dailies.add(element.outerHtml);
       }
       return dailies;
     } else {
@@ -31,16 +26,8 @@ class Scraper {
     }
   }
 
-  Future<List<Daily>> _getDailies(List<String> links) async {
-    List<Daily> dailies = [];
-    for (String link in links) {
-      dailies.add(await _extractDaily(link));
-    }
-    return dailies;
-  }
-
   Future<Daily> getDaily(String link) async {
-    return _extractDaily(link);
+    return await _extractDaily(_subtractLink(link));
   }
 
   Future<Daily> _extractDaily(String link) async {
@@ -48,13 +35,49 @@ class Scraper {
     if (response.statusCode == 200) {
       var document = parse(response.body);
       String title = document.querySelector('.item-page-title a').innerHtml;
-      String date =
-          document.querySelector('.published').text.trim().substring(10);
+      DateTime date = _convertToDate(
+          document.querySelector('.published').text.trim().substring(11));
       String htmlString = document.querySelector("#comp-wrap p").outerHtml;
       return Daily(title, date, htmlString);
     } else {
       throw Exception('Failed to load post');
       //TODO implement no response
     }
+  }
+
+  DateTime _convertToDate(String dateString) {
+    int year = int.parse(dateString.substring(0, 3));
+    int month = _getMonth(dateString);
+    int day = int.parse(dateString.substring(12, 14));
+    return DateTime(year, month, day);
+  }
+
+  int _getMonth(String dateString) {
+    if (dateString.contains("január")) {
+      return 1;
+    } else if (dateString.contains("február")) {
+      return 2;
+    } else if (dateString.contains("március")) {
+      return 3;
+    } else if (dateString.contains("április")) {
+      return 4;
+    } else if (dateString.contains("május")) {
+      return 5;
+    } else if (dateString.contains("június")) {
+      return 6;
+    } else if (dateString.contains("július")) {
+      return 7;
+    } else if (dateString.contains("augusztus")) {
+      return 8;
+    } else if (dateString.contains("szeptember")) {
+      return 9;
+    } else if (dateString.contains("október")) {
+      return 10;
+    } else if (dateString.contains("november")) {
+      return 11;
+    } else if (dateString.contains("december")) {
+      return 12;
+    }
+    return 0;
   }
 }

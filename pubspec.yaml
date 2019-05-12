@@ -17,6 +17,8 @@ environment:
   sdk: ">=2.1.0 <3.0.0"
 
 dependencies:
+  path_provider: ^1.1.0
+  sqflite: ^1.1.5
   html: ^0.13.3
   flutter_html: ^0.9.6
   rxdart: ^0.18.0
