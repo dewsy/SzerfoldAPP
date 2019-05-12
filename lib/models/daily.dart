@@ -1,4 +1,5 @@
 class Daily {
+  int id;
   String title;
   String date;
   String html;

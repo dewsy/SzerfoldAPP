@@ -4,13 +4,33 @@ import '../models/daily.dart';
 
 import 'package:flutter_html/flutter_html.dart';
 
-class DailyCards extends StatelessWidget {
+class DailyCards extends StatefulWidget {
+
+@override
+State<StatefulWidget> createState() {
+return DailyCardsState();
+}
+}
+
+class DailyCardsState extends State<DailyCards> {
+
+  @override
+  void initState() { 
+    super.initState();
+    bloc.collectDailies(pageNumber);
+  }
+
+  @override
+  void dispose() {
+    bloc.dispose();
+    super.dispose();
+  }
+
   final int pageNumber = 0;
   final List<Daily> dailies = List<Daily>();
 
   @override
   Widget build(BuildContext context) {
-    bloc.collectDailies(pageNumber);
     return StreamBuilder(
         stream: bloc.getDailies,
         builder: (context, AsyncSnapshot<Daily> snapshot) {
@@ -20,14 +40,26 @@ class DailyCards extends StatelessWidget {
               padding: EdgeInsets.all(8.0),
               itemCount: dailies.length,
               itemBuilder: (BuildContext context, int index) {
-                return Html(
-                  data: dailies[index].html
-                );
+                return _cardBuilder(dailies[index]);
               },
             );
           } else {
             return Container();
           }
         });
+  }
+
+  Widget _cardBuilder(Daily daily) {
+      return Card(
+        elevation: 4,
+        shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(10)),
+        child: Container(
+          width: 200,
+          height: 300,
+          child: Html(
+            data: daily.html,
+          ),
+        ),
+      );
   }
 }
