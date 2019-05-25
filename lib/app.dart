@@ -1,5 +1,4 @@
 import 'package:flutter/material.dart';
-import 'package:szeretet_foldje/data/data_handler.dart';
 import 'package:szeretet_foldje/data/database_helper.dart';
 import 'ui/daily_cards.dart';
 
@@ -10,7 +9,7 @@ class App extends StatelessWidget {
       title: "Napi gondolatok",
       home: Scaffold(
           appBar: AppBar(
-            title: Text('Napi gondolatok'),
+            title: Text('A mai napra'),
             actions: <Widget>[
               GestureDetector(
                   onTap: () => dbHelper.deleteAll(),
