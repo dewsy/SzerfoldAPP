@@ -1,18 +1,18 @@
 import 'package:rxdart/rxdart.dart';
+import 'package:szeretet_foldje/data/data_handler.dart';
 import '../models/daily.dart';
-import '../repository/scraper.dart';
 
 class DailyBloc {
-  final _scraper = Scraper();
   final _dailyFetcer = PublishSubject<Daily>();
 
   Observable<Daily> get getDailies => _dailyFetcer.stream;
 
-  collectDailies(int start) async {
-    List<String> links = await _scraper.getLinks(start);
-    for(String link in links) {
-      _dailyFetcer.sink.add(await _scraper.getDaily(link));
+  void fetchDailies(int start) async {
+    await dataHandler.getNewDailies(start);
   }
+
+  void streamDaily(Daily daily) {
+    _dailyFetcer.sink.add(daily);
   }
 
   dispose() {
@@ -20,4 +20,4 @@ class DailyBloc {
   }
 }
 
-final bloc = DailyBloc();
+final dailyBloc = DailyBloc();

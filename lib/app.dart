@@ -1,4 +1,6 @@
 import 'package:flutter/material.dart';
+import 'package:szeretet_foldje/data/data_handler.dart';
+import 'package:szeretet_foldje/data/database_helper.dart';
 import 'ui/daily_cards.dart';
 
 class App extends StatelessWidget {
@@ -9,6 +11,13 @@ class App extends StatelessWidget {
       home: Scaffold(
           appBar: AppBar(
             title: Text('Napi gondolatok'),
+            actions: <Widget>[
+              GestureDetector(
+                  onTap: () => dbHelper.deleteAll(),
+                  child: Icon(
+                    Icons.backspace,
+                  )),
+            ],
           ),
           body: DailyCards()),
     );

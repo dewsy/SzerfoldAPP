@@ -41,9 +41,9 @@ class DatabaseHelper {
     await db.execute('''
           CREATE TABLE $table (
             $columnId INTEGER PRIMARY KEY AUTOINCREMENT,
-            $columnTitle TEXT NOT NULL,
-            $columnDate TEXT NOT NULL
-            $columnHtml TEXT NOT NULL
+            $columnTitle TEXT,
+            $columnDate DATETIME NOT NULL UNIQUE,
+            $columnHtml TEXT
           )
           ''');
   }
@@ -53,9 +53,15 @@ class DatabaseHelper {
   // Inserts a row in the database where each key in the Map is a column name
   // and the value is the column value. The return value is the id of the
   // inserted row.
-  Future<int> insert(Map<String, dynamic> row) async {
+  Future<int> insertOrUpdate(Map<String, dynamic> row) async {
     Database db = await instance.database;
-    return await db.insert(table, row);
+    try {
+      return await db.insert(table, row);
+    } catch (e) {
+      String date = row[columnDate];
+      return await db
+          .update(table, row, where: '$columnDate = ?', whereArgs: [date]);
+    }
   }
 
   // All of the rows are returned as a list of maps, where each map is
@@ -69,8 +75,9 @@ class DatabaseHelper {
   // column values will be used to update the row.
   Future<int> update(Map<String, dynamic> row) async {
     Database db = await instance.database;
-    int id = row[columnId];
-    return await db.update(table, row, where: '$columnId = ?', whereArgs: [id]);
+    String date = row[columnDate];
+    return await db
+        .update(table, row, where: '$columnDate = ?', whereArgs: [date]);
   }
 
   // Deletes the row specified by the id. The number of affected rows is
@@ -78,6 +85,11 @@ class DatabaseHelper {
   Future<int> delete(int id) async {
     Database db = await instance.database;
     return await db.delete(table, where: '$columnId = ?', whereArgs: [id]);
+  }
+
+  Future<void> deleteAll() async {
+    Database db = await instance.database;
+    db.execute("DELETE FROM $table;");
   }
 }
 

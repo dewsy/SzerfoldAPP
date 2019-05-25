@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
-import '../blocs/daily_bloc.dart';
+import 'package:szeretet_foldje/blocs/daily_bloc.dart';
+import 'package:szeretet_foldje/data/data_handler.dart';
 import '../models/daily.dart';
 
 import 'package:flutter_html/flutter_html.dart';
@@ -12,40 +13,47 @@ class DailyCards extends StatefulWidget {
 }
 
 class DailyCardsState extends State<DailyCards> {
+  List<Daily> dailies = List<Daily>();
+
   @override
   void initState() {
+    dailyBloc.fetchDailies(0);
+    _collectDailies();
+    _updateOnStreamEvent();
     super.initState();
-    bloc.collectDailies(pageNumber);
   }
 
   @override
   void dispose() {
-    bloc.dispose();
+    dailyBloc.dispose();
     super.dispose();
   }
 
-  final int pageNumber = 0;
-  final List<Daily> dailies = List<Daily>();
+  _collectDailies() async {
+    var stored = await dataHandler.getStoredDailies();
+    setState(() {
+      dailies = stored;
+      _dailySorter();
+    });
+  }
+
+  _updateOnStreamEvent() {
+    dailyBloc.getDailies.listen((onData) => {_collectDailies()});
+  }
+
+  void _dailySorter() {
+    dailies.sort((a, b) => b.date.compareTo(a.date));
+  }
 
   @override
   Widget build(BuildContext context) {
-    return StreamBuilder(
-        stream: bloc.getDailies,
-        builder: (context, AsyncSnapshot<Daily> snapshot) {
-          if (snapshot.hasData) {
-            dailies.add(snapshot.data);
-            dailies.sort((a, b) => b.date.compareTo(a.date));
-            return ListView.builder(
-              padding: EdgeInsets.all(8.0),
-              itemCount: dailies.length,
-              itemBuilder: (BuildContext context, int index) {
-                return _cardBuilder(dailies[index]);
-              },
-            );
-          } else {
-            return Container();
-          }
-        });
+    return ListView.builder(
+      padding: EdgeInsets.all(8.0),
+      itemCount: dailies.length,
+      itemBuilder: (BuildContext context, int index) {
+        return _cardBuilder(dailies[index]);
+      },
+    );
   }
 
   Widget _cardBuilder(Daily daily) {
@@ -58,8 +66,7 @@ class DailyCardsState extends State<DailyCards> {
           child: Column(
             children: <Widget>[
               Text(daily.title),
-              Text(
-                  '${daily.date.year}-${daily.date.month}-${daily.date.day}'),
+              Text('${daily.date.year}-${daily.date.month}-${daily.date.day}'),
               Html(data: daily.html)
             ],
           )),
