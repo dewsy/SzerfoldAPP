@@ -3,7 +3,6 @@ import 'package:szeretet_foldje/blocs/daily_bloc.dart';
 import 'package:szeretet_foldje/data/data_handler.dart';
 import '../models/daily.dart';
 import 'package:url_launcher/url_launcher.dart';
-
 import 'package:flutter_html/flutter_html.dart';
 
 class DailyCards extends StatefulWidget {
@@ -82,7 +81,7 @@ class DailyCardsState extends State<DailyCards> {
     return Column(children: <Widget>[
       Center(
           child: Container(
-        margin: EdgeInsets.fromLTRB(0,20,0,10),
+        margin: EdgeInsets.fromLTRB(0, 20, 0, 10),
         height: MediaQuery.of(context).size.height * 0.7,
         child: PageView.builder(
           scrollDirection: Axis.horizontal,
@@ -96,17 +95,21 @@ class DailyCardsState extends State<DailyCards> {
       Expanded(
           child: Align(
               alignment: Alignment.bottomCenter,
-              child: Column(children: <Widget>[
-                Text("Látogass el naponta frissülő honlapunkra:"),
-              Container(
-                  child: RaisedButton(
+              child: Column(
+                children: <Widget>[
+                  Text("Látogass el naponta frissülő honlapunkra:"),
+                  Container(
+                      child: RaisedButton(
                     onPressed: _launchURL,
                     textColor: Colors.white,
                     color: Colors.lightGreen,
                     elevation: 4,
-                    shape: new RoundedRectangleBorder(borderRadius: new BorderRadius.circular(10.0)),
+                    shape: new RoundedRectangleBorder(
+                        borderRadius: new BorderRadius.circular(10.0)),
                     child: Text("szeretetföldje.hu"),
-                  ))],)))
+                  ))
+                ],
+              )))
     ]);
   }
 
@@ -122,10 +125,10 @@ class DailyCardsState extends State<DailyCards> {
                   child: Column(
                     children: <Widget>[
                       Padding(
-                        padding: EdgeInsets.fromLTRB(0, 20, 0, 20),
-                        child: Text(daily.title,
-                          style: TextStyle(
-                              fontSize: 20, fontWeight: FontWeight.bold))),
+                          padding: EdgeInsets.fromLTRB(0, 20, 0, 20),
+                          child: Text(daily.title,
+                              style: TextStyle(
+                                  fontSize: 20, fontWeight: FontWeight.bold))),
                       Text(
                           '${daily.date.year}-${daily.date.month}-${daily.date.day}'),
                       Expanded(

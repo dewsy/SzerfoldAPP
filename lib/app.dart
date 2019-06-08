@@ -6,6 +6,7 @@ class App extends StatelessWidget {
   Widget build(BuildContext context) {
     return MaterialApp(
       title: "Napi gondolatok",
+      theme: ThemeData(accentColor: Colors.lightGreenAccent),
       home: Scaffold(
           appBar: AppBar(
             backgroundColor: Colors.lightGreen,

@@ -1,5 +1,4 @@
 import 'package:rxdart/rxdart.dart';
-import 'package:szeretet_foldje/data/data_handler.dart';
 import '../models/daily.dart';
 
 class DailyBloc {
