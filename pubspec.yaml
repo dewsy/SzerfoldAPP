@@ -14,7 +14,7 @@ description: This is a small and easy app, colectinfg a displaying news from my 
 version: 1.0.0+1
 
 environment:
-  sdk: ">=2.2.0 <3.0.0"
+  sdk: ">=2.2.2 <3.0.0"
 
 dependencies:
   path_provider: ^1.1.0

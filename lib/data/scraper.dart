@@ -62,29 +62,30 @@ class Scraper {
   DateTime _convertToDate(String dateString) {
     int year = int.parse(dateString.substring(0, 4));
     int month = _getMonth(dateString);
-    int day = int.parse(dateString.substring(12, 14));
+    int day = int.parse(dateString.substring(
+        dateString.lastIndexOf(".") - 2, dateString.lastIndexOf(".")));
     return DateTime(year, month, day);
   }
 
   int _getMonth(String dateString) {
     if (dateString.contains("január")) {
-      return 01;
+      return 1;
     } else if (dateString.contains("február")) {
-      return 02;
+      return 2;
     } else if (dateString.contains("március")) {
-      return 03;
+      return 3;
     } else if (dateString.contains("április")) {
-      return 04;
+      return 4;
     } else if (dateString.contains("május")) {
-      return 05;
+      return 5;
     } else if (dateString.contains("június")) {
-      return 06;
+      return 6;
     } else if (dateString.contains("július")) {
-      return 07;
+      return 7;
     } else if (dateString.contains("augusztus")) {
-      return 08;
+      return 8;
     } else if (dateString.contains("szeptember")) {
-      return 09;
+      return 9;
     } else if (dateString.contains("október")) {
       return 10;
     } else if (dateString.contains("november")) {

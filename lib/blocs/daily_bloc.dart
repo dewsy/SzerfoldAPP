@@ -7,12 +7,9 @@ class DailyBloc {
 
   Observable<Daily> get getDailies => _dailyFetcer.stream;
 
-  void fetchDailies(int start) async {
-    await dataHandler.getNewDailies(start);
-  }
-
-  void streamDaily(Daily daily) {
+  Daily streamDaily(Daily daily) {
     _dailyFetcer.sink.add(daily);
+    return daily;
   }
 
   dispose() {

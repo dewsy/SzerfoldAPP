@@ -14,31 +14,62 @@ class DailyCards extends StatefulWidget {
 }
 
 class DailyCardsState extends State<DailyCards> {
+  PageController _pageController =
+      PageController(viewportFraction: 0.9, initialPage: 0);
   List<Daily> dailies = List<Daily>();
 
   @override
   void initState() {
-    dailyBloc.fetchDailies(0);
+    dataHandler.loadDailies(null);
     _collectDailies();
     _updateOnStreamEvent();
+    _pageController.addListener(() => {
+          if (_pageController.position.pixels ==
+              _pageController.position.maxScrollExtent)
+            {_displayMoreDailies()}
+        });
+    _pageController.addListener(() => {
+          if (_pageController.position.pixels ==
+              _pageController.position.minScrollExtent)
+            {dataHandler.loadDailies(null), _updateOnStreamEvent()}
+        });
     super.initState();
+  }
+
+  _displayMoreDailies() async {
+    List<Daily> newDailies = await dataHandler.loadDailies(dailies.last.date);
+    if (newDailies != null) {
+      setState(() {
+        for (Daily daily in newDailies) {
+          dailies.retainWhere((d) => d.date != daily.date);
+          dailies.add(daily);
+        }
+        _dailySorter();
+      });
+    } else {
+      setState(() {});
+    }
   }
 
   @override
   void dispose() {
     dailyBloc.dispose();
+    _pageController.dispose();
     super.dispose();
   }
 
-  _collectDailies() async {
+  void _collectDailies() async {
     var stored = await dataHandler.getStoredDailies();
     setState(() {
-      dailies = stored;
+      for (Daily daily in stored) {
+        dailies.retainWhere((d) => d.date != daily.date);
+        dailies.add(daily);
+      }
       _dailySorter();
     });
   }
 
-  _updateOnStreamEvent() {
+  void _updateOnStreamEvent() {
     dailyBloc.getDailies.listen((onData) => {_collectDailies()});
   }
 
@@ -51,11 +82,11 @@ class DailyCardsState extends State<DailyCards> {
     return Column(children: <Widget>[
       Center(
           child: Container(
-        margin: EdgeInsets.only(top: 30),
+        margin: EdgeInsets.fromLTRB(0,20,0,10),
         height: MediaQuery.of(context).size.height * 0.7,
         child: PageView.builder(
           scrollDirection: Axis.horizontal,
-          controller: PageController(viewportFraction: 0.9, initialPage: 0),
+          controller: _pageController,
           itemCount: dailies.length,
           itemBuilder: (BuildContext context, int index) {
             return _cardBuilder(dailies[index]);
@@ -65,30 +96,36 @@ class DailyCardsState extends State<DailyCards> {
       Expanded(
           child: Align(
               alignment: Alignment.bottomCenter,
-              child: Container(
-                  margin: EdgeInsets.only(bottom: 5),
-                  child: GestureDetector(
-                      onTap: _launchURL,
-                      child: Text("Látogass el honlapunkra!")))))
+              child: Column(children: <Widget>[
+                Text("Látogass el naponta frissülő honlapunkra:"),
+              Container(
+                  child: RaisedButton(
+                    onPressed: _launchURL,
+                    textColor: Colors.white,
+                    color: Colors.lightGreen,
+                    elevation: 4,
+                    shape: new RoundedRectangleBorder(borderRadius: new BorderRadius.circular(10.0)),
+                    child: Text("szeretetföldje.hu"),
+                  ))],)))
     ]);
   }
 
   Widget _cardBuilder(Daily daily) {
     return Container(
         child: Card(
-            elevation: 3,
+            elevation: 4,
             shape:
                 RoundedRectangleBorder(borderRadius: BorderRadius.circular(10)),
             child: Center(
               child: Container(
-                  padding: EdgeInsets.only(top: 4),
+                  padding: EdgeInsets.only(top: 3),
                   child: Column(
                     children: <Widget>[
-                      Text(daily.title,
+                      Padding(
+                        padding: EdgeInsets.fromLTRB(0, 20, 0, 20),
+                        child: Text(daily.title,
                           style: TextStyle(
-                              fontSize: 20,
-                              fontWeight: FontWeight.bold,
-                              height: 2)),
+                              fontSize: 20, fontWeight: FontWeight.bold))),
                       Text(
                           '${daily.date.year}-${daily.date.month}-${daily.date.day}'),
                       Expanded(

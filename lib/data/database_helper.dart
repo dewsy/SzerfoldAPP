@@ -71,6 +71,18 @@ class DatabaseHelper {
     return await db.query(table);
   }
 
+  Future<List<Map<String, dynamic>>> query10Rows(int offset) async {
+    Database db = await instance.database;
+    return await db.query(table, limit: 10, offset: offset);
+  }
+
+  Future<List<Map<String, dynamic>>> queryByDate(DateTime date) async {
+    Database db = await instance.database;
+    String dateString = '${date.year}-${date.month}-${date.day}';
+    return await db
+        .query(table, where: '$columnDate = ?', whereArgs: [dateString]);
+  }
+
   // We are assuming here that the id column in the map is set. The other
   // column values will be used to update the row.
   Future<int> update(Map<String, dynamic> row) async {
