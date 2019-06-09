@@ -20,9 +20,9 @@ class DataHandler {
     return listOfMaps.map((data) => _createDailyFromMap(data)).toList();
   }
 
-  Future<List<Daily>> _getNewDailies() async {
+  Future<List<Daily>> getNewDailies(int page) async {
     List<Daily> returnList = List();
-    List<String> links = await _scraper.getLinks(_scraperPage);
+    List<String> links = await _scraper.getLinks(page);
     if (!(links == null)) {
       for (String link in links) {
         await _scraper
@@ -41,7 +41,7 @@ class DataHandler {
 
   Future<List<Daily>> loadDailies(DateTime lastDisplayedDate) async {
     if (lastDisplayedDate == null) {
-      return _getNewDailies();
+      return getNewDailies(_scraperPage);
     } else {
       DateTime prewDay = lastDisplayedDate.add(Duration(days: -1));
       List<Map<String, dynamic>> next = await dbHelper.queryByDate(prewDay);
@@ -49,7 +49,7 @@ class DataHandler {
         return await getStoredDailies();
       } else {
         _scraperPage += 11;
-        return _getNewDailies();
+        return getNewDailies(_scraperPage);
       }
     }
   }

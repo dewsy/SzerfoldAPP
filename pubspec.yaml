@@ -7,6 +7,7 @@ environment:
   sdk: ">=2.2.2 <3.0.0"
 
 dependencies:
+  flutter_local_notifications: '0.7.1+1'
   background_fetch: '^0.2.0'
   path_provider: ^1.1.0
   sqflite: ^1.1.5
@@ -23,8 +24,14 @@ dependencies:
   cupertino_icons: ^0.1.2
 
 dev_dependencies:
+  flutter_launcher_icons: 
   flutter_test:
     sdk: flutter
+
+flutter_icons:
+  image_path: "lib/ui/normal_logo.png"
+  android: true
+  ios: false
 
 flutter:
   uses-material-design: true

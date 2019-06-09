@@ -76,6 +76,11 @@ class DatabaseHelper {
     return await db.query(table, limit: 10, offset: offset);
   }
 
+    Future<List<Map<String, dynamic>>> queryLatest() async {
+    Database db = await instance.database;
+    return db.rawQuery("SELECT * FROM $table ORDER BY $columnDate DESC LIMIT 1;");
+  }
+
   Future<List<Map<String, dynamic>>> queryByDate(DateTime date) async {
     Database db = await instance.database;
     String dateString = '${date.year}-${date.month}-${date.day}';

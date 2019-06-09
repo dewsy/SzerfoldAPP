@@ -15,7 +15,7 @@ class Daily {
 
   Daily.fromMap(Map<String, dynamic> map) {
     String dateString = map["date"];
-    if (dateString.length < 10) {
+    if (dateString[5] != "0") {
       dateString = (dateString.substring(0, 5) + "0" + dateString.substring(5));
     }
     if (dateString.length == 9) {

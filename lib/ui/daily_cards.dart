@@ -1,3 +1,4 @@
+import 'package:background_fetch/background_fetch.dart';
 import 'package:flutter/material.dart';
 import 'package:szeretet_foldje/blocs/daily_bloc.dart';
 import 'package:szeretet_foldje/data/data_handler.dart';
