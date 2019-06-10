@@ -1,18 +1,11 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_local_notifications/flutter_local_notifications.dart';
 import 'app.dart';
-import 'package:background_fetch/background_fetch.dart';
 
-/// This "Headless Task" is run when app is terminated.
-void backgroundFetchHeadlessTask() async {
-  BackgroundFetch.finish();
-}
-
-
+FlutterLocalNotificationsPlugin flutterLocalNotificationsPlugin;
 
 void main() {
+  flutterLocalNotificationsPlugin = FlutterLocalNotificationsPlugin();
   runApp(App());
-    // Register to receive BackgroundFetch events after app is terminated.
-  // Requires {stopOnTerminate: false, enableHeadless: true}
-  BackgroundFetch.registerHeadlessTask(backgroundFetchHeadlessTask);
   }
  

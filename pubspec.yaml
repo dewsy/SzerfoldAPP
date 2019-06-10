@@ -8,7 +8,6 @@ environment:
 
 dependencies:
   flutter_local_notifications: '0.7.1+1'
-  background_fetch: '^0.2.0'
   path_provider: ^1.1.0
   sqflite: ^1.1.5
   html: ^0.13.3
