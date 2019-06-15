@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:szeretet_foldje/blocs/daily_bloc.dart';
 import 'package:szeretet_foldje/data/data_handler.dart';
+import 'package:szeretet_foldje/data/notification.dart';
 import '../models/daily.dart';
 import 'package:url_launcher/url_launcher.dart';
 import 'package:flutter_html/flutter_html.dart';
@@ -19,6 +20,7 @@ class DailyCardsState extends State<DailyCards> {
 
   @override
   void initState() {
+    Noti().createNoti();
     _collectDailies();
     dataHandler.loadDailies(null);
     _updateOnStreamEvent();
