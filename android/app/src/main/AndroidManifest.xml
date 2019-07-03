@@ -9,7 +9,7 @@
          FlutterApplication and put your custom class here. -->
     <application
         android:name="io.flutter.app.FlutterApplication"
-        android:label="szeretet_foldje"
+        android:label="Szeretet földje"
         tools:replace="android:label"
         android:icon="@mipmap/ic_launcher">
         <activity
@@ -32,6 +32,5 @@
             </intent-filter>
         </activity>
     </application>
-    <uses-permission android:name="android.permission.VIBRATE" />
-    <uses-permission android:name="android.permission.RECEIVE_BOOT_COMPLETED"/>
+    <uses-permission android:name="android.permission.INTERNET"/>
 </manifest>

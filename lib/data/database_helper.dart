@@ -50,9 +50,6 @@ class DatabaseHelper {
 
   // Helper methods
 
-  // Inserts a row in the database where each key in the Map is a column name
-  // and the value is the column value. The return value is the id of the
-  // inserted row.
   Future<int> insertOrUpdate(Map<String, dynamic> row) async {
     Database db = await instance.database;
     try {
@@ -71,14 +68,21 @@ class DatabaseHelper {
     return await db.query(table);
   }
 
-  Future<List<Map<String, dynamic>>> query10Rows(int offset) async {
+  Future<List<Map<String, dynamic>>> query10Rows(DateTime date) async {
     Database db = await instance.database;
-    return await db.query(table, limit: 10, offset: offset);
+    String dateString = '${date.year}-${date.month}-${date.day}';
+    var result = await db.query(table,
+        where: '$columnDate <= ?',
+        whereArgs: [dateString],
+        limit: 11,
+        orderBy: "$columnDate DESC");
+    return result;
   }
 
-    Future<List<Map<String, dynamic>>> queryLatest() async {
+  Future<List<Map<String, dynamic>>> queryLatest() async {
     Database db = await instance.database;
-    return db.rawQuery("SELECT * FROM $table ORDER BY $columnDate DESC LIMIT 1;");
+    return db
+        .rawQuery("SELECT * FROM $table ORDER BY $columnDate DESC LIMIT 1;");
   }
 
   Future<List<Map<String, dynamic>>> queryByDate(DateTime date) async {

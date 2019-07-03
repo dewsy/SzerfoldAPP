@@ -1,3 +1,4 @@
+
 import 'package:rxdart/rxdart.dart';
 import '../models/daily.dart';
 
@@ -17,3 +18,4 @@ class DailyBloc {
 }
 
 final dailyBloc = DailyBloc();
+

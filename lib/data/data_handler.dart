@@ -5,7 +5,6 @@ import 'package:szeretet_foldje/models/daily.dart';
 
 class DataHandler {
   final _scraper = Scraper();
-  int _queryOffset = 0;
   int _scraperPage = 0;
 
   Daily putDataToDb(Daily daily) {
@@ -13,10 +12,9 @@ class DataHandler {
     return daily;
   }
 
-  Future<List<Daily>> getStoredDailies() async {
+  Future<List<Daily>> getStoredDailies(DateTime lastDisplayedDate) async {
     //dbHelper.deleteAll();
-    var listOfMaps = await dbHelper.query10Rows(_queryOffset);
-    ++_queryOffset;
+    var listOfMaps = await dbHelper.query10Rows(lastDisplayedDate);
     return listOfMaps.map((data) => _createDailyFromMap(data)).toList();
   }
 
@@ -25,7 +23,7 @@ class DataHandler {
     List<String> links = await _scraper.getLinks(page);
     if (!(links == null)) {
       for (String link in links) {
-        await _scraper
+        _scraper
             .getDaily(link)
             .then((onValue) => dataHandler.putDataToDb(onValue))
             .then((onValue) => {dailyBloc.streamDaily(onValue)})
@@ -46,7 +44,7 @@ class DataHandler {
       DateTime prewDay = lastDisplayedDate.add(Duration(days: -1));
       List<Map<String, dynamic>> next = await dbHelper.queryByDate(prewDay);
       if (next.isNotEmpty) {
-        return await getStoredDailies();
+        return await getStoredDailies(lastDisplayedDate);
       } else {
         _scraperPage += 11;
         return getNewDailies(_scraperPage);
