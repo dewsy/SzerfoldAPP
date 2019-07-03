@@ -1,10 +1,10 @@
 import 'package:flutter/material.dart';
 import 'package:szeretet_foldje/blocs/daily_bloc.dart';
-import 'package:szeretet_foldje/data/bg_fetch.dart';
 import 'package:szeretet_foldje/data/data_handler.dart';
 import '../models/daily.dart';
 import 'package:url_launcher/url_launcher.dart';
 import 'package:flutter_html/flutter_html.dart';
+import 'package:connectivity/connectivity.dart';
 
 class DailyCards extends StatefulWidget {
   @override
@@ -20,10 +20,8 @@ class DailyCardsState extends State<DailyCards> {
 
   @override
   void initState() {
-    bgFetch.initPlatformState();
-    bgFetch.eanbleFetch();
-    dataHandler.loadDailies(null);
     _collectDailies();
+    dataHandler.loadDailies(null);
     _updateOnStreamEvent();
     _pageController.addListener(() => {
           if (_pageController.position.pixels ==
@@ -39,16 +37,17 @@ class DailyCardsState extends State<DailyCards> {
   }
 
   _displayMoreDailies() async {
+    int originalLength = dailies.length;
     List<Daily> newDailies = await dataHandler.loadDailies(dailies.last.date);
     if (newDailies != null) {
-      setState(() {
-        for (Daily daily in newDailies) {
-          dailies.retainWhere((d) => d.date != daily.date);
-          dailies.add(daily);
-        }
-        _dailySorter();
-      });
-    } else {
+      for (Daily daily in newDailies) {
+        dailies.retainWhere((d) => d.date != daily.date);
+        dailies.add(daily);
+      }
+      _dailySorter();
+      if (originalLength >= dailies.length) {
+        _displayMoreDailies();
+      }
       setState(() {});
     }
   }
@@ -61,7 +60,7 @@ class DailyCardsState extends State<DailyCards> {
   }
 
   void _collectDailies() async {
-    var stored = await dataHandler.getStoredDailies();
+    var stored = await dataHandler.getStoredDailies(DateTime.now());
     setState(() {
       for (Daily daily in stored) {
         dailies.retainWhere((d) => d.date != daily.date);
@@ -82,19 +81,7 @@ class DailyCardsState extends State<DailyCards> {
   @override
   Widget build(BuildContext context) {
     return Column(children: <Widget>[
-      Center(
-          child: Container(
-        margin: EdgeInsets.fromLTRB(0, 20, 0, 10),
-        height: MediaQuery.of(context).size.height * 0.7,
-        child: PageView.builder(
-          scrollDirection: Axis.horizontal,
-          controller: _pageController,
-          itemCount: dailies.length,
-          itemBuilder: (BuildContext context, int index) {
-            return _cardBuilder(dailies[index]);
-          },
-        ),
-      )),
+      Center(child: _homeScreenSelector()),
       Expanded(
           child: Align(
               alignment: Alignment.bottomCenter,
@@ -146,6 +133,51 @@ class DailyCardsState extends State<DailyCards> {
                     ],
                   )),
             )));
+  }
+
+  Widget _homeScreenSelector() {
+    if (dailies.length > 0) {
+      return Container(
+        margin: EdgeInsets.fromLTRB(0, 20, 0, 10),
+        height: MediaQuery.of(context).size.height * 0.7,
+        child: PageView.builder(
+          scrollDirection: Axis.horizontal,
+          controller: _pageController,
+          itemCount: dailies.length,
+          itemBuilder: (BuildContext context, int index) {
+            return _cardBuilder(dailies[index]);
+          },
+        ),
+      );
+    } else {
+      return _isThereInternet();
+    }
+  }
+
+  Widget _isThereInternet() {
+    return StreamBuilder(
+      stream: Connectivity().onConnectivityChanged,
+      builder:
+          (BuildContext context, AsyncSnapshot<ConnectivityResult> snapshot) {
+        switch (snapshot.data) {
+          case ConnectivityResult.wifi:
+          case ConnectivityResult.mobile:
+            dataHandler.loadDailies(null);
+            return Container(
+                margin: EdgeInsets.fromLTRB(0, 20, 0, 10),
+                height: MediaQuery.of(context).size.height * 0.7,
+                child: Center(
+                  child: CircularProgressIndicator(),
+                ));
+            break;
+          default:
+            return Container(
+                margin: EdgeInsets.fromLTRB(0, 20, 0, 10),
+                height: MediaQuery.of(context).size.height * 0.7,
+                child: Center(child: Text("Kérlek kapcsolj internetet!")));
+        }
+      },
+    );
   }
 
   _launchURL() async {

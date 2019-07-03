@@ -45,18 +45,20 @@ class Scraper {
   }
 
   Future<Daily> _extractDaily(String link) async {
-    Response response = await Client().get(link);
-    if (response.statusCode == 200) {
-      var document = parse(response.body);
-      String title = document.querySelector('.item-page-title a').innerHtml;
-      DateTime date = _convertToDate(
-          document.querySelector('.published').text.trim().substring(11));
-      String htmlString = document.querySelector("#comp-wrap p").outerHtml;
-      return Daily(title, date, htmlString);
-    } else {
-      throw Exception('Failed to load post');
-      //TODO implement no response
-    }
+    try {
+      Response response = await Client().get(link);
+      if (response.statusCode == 200) {
+        var document = parse(response.body);
+        String title = document.querySelector('.item-page-title a').innerHtml;
+        DateTime date = _convertToDate(
+            document.querySelector('.published').text.trim().substring(11));
+        String htmlString = document.querySelector("#comp-wrap p").outerHtml;
+        return Daily(title, date, htmlString);
+      } else {
+        throw Exception('Failed to load post');
+        //TODO implement no response
+      }
+    } catch (e) {}
   }
 
   DateTime _convertToDate(String dateString) {
