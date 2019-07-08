@@ -96,7 +96,7 @@ class DailyCardsState extends State<DailyCards> {
                     elevation: 4,
                     shape: new RoundedRectangleBorder(
                         borderRadius: new BorderRadius.circular(10.0)),
-                    child: Text("szeretetföldje.hu"),
+                    child: Text("szeretetfoldje.hu"),
                   ))
                 ],
               )))
