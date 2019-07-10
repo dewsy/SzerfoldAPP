@@ -60,7 +60,7 @@ apply from: "$flutterRoot/packages/flutter_tools/gradle/flutter.gradle"
            signingConfig signingConfigs.release
             minifyEnabled true
             useProguard true
-
+            
             proguardFiles getDefaultProguardFile('proguard-android.txt'), 'proguard-rules.pro'
 
             dependencies {
