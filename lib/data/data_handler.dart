@@ -15,7 +15,16 @@ class DataHandler {
   Future<List<Daily>> getStoredDailies(DateTime lastDisplayedDate) async {
     //dbHelper.deleteAll();
     var listOfMaps = await dbHelper.query10Rows(lastDisplayedDate);
-    return listOfMaps.map((data) => _createDailyFromMap(data)).toList();
+    var listOfDailies =
+        listOfMaps.map((data) => _createDailyFromMap(data)).toList();
+    for (Daily daily in listOfDailies) {
+      print('displayed: ${daily.date}');
+    }
+    var allRows = await dbHelper.queryAllRows();
+    for (var row in allRows) {
+      print('all: ${row["date"]}');
+    }
+    return listOfDailies;
   }
 
   Future<List<Daily>> getNewDailies(int page) async {
