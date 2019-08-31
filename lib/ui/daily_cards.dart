@@ -1,5 +1,4 @@
 import 'package:flutter/material.dart';
-import 'package:szeretet_foldje/blocs/daily_bloc.dart';
 import 'package:szeretet_foldje/data/data_handler.dart';
 import '../models/daily.dart';
 import 'package:url_launcher/url_launcher.dart';
@@ -17,12 +16,10 @@ class DailyCardsState extends State<DailyCards> {
   PageController _pageController =
       PageController(viewportFraction: 0.9, initialPage: 0);
   List<Daily> dailies = List<Daily>();
+  List<Widget> _dailieViews = List();
 
   @override
   void initState() {
-    _collectDailies();
-    dataHandler.loadDailies(null);
-    _updateOnStreamEvent();
     _pageController.addListener(() => {
           if (_pageController.position.pixels ==
               _pageController.position.maxScrollExtent)
@@ -31,7 +28,7 @@ class DailyCardsState extends State<DailyCards> {
     _pageController.addListener(() => {
           if (_pageController.position.pixels ==
               _pageController.position.minScrollExtent)
-            {dataHandler.loadDailies(null), _updateOnStreamEvent()}
+            {dataHandler.loadDailies(null)}
         });
     super.initState();
   }
@@ -54,7 +51,6 @@ class DailyCardsState extends State<DailyCards> {
 
   @override
   void dispose() {
-    dailyBloc.dispose();
     _pageController.dispose();
     super.dispose();
   }
@@ -70,8 +66,16 @@ class DailyCardsState extends State<DailyCards> {
     });
   }
 
-  void _updateOnStreamEvent() {
-    dailyBloc.getDailies.listen((onData) => {_collectDailies()});
+  void _addOrUpdateDaily(Daily onData) {
+    setState(() {
+      Daily pair = dailies.firstWhere((daily) => daily.date == onData.date);
+      if (pair != null) {
+        dailies[dailies.indexOf(pair)] = onData;
+      } else {
+        dailies.add(onData);
+      }
+      _dailySorter();
+    });
   }
 
   void _dailySorter() {
@@ -140,13 +144,10 @@ class DailyCardsState extends State<DailyCards> {
       return Container(
         margin: EdgeInsets.fromLTRB(0, 20, 0, 10),
         height: MediaQuery.of(context).size.height * 0.7,
-        child: PageView.builder(
+        child: PageView(
           scrollDirection: Axis.horizontal,
           controller: _pageController,
-          itemCount: dailies.length,
-          itemBuilder: (BuildContext context, int index) {
-            return _cardBuilder(dailies[index]);
-          },
+          children: _dailieViews,
         ),
       );
     } else {

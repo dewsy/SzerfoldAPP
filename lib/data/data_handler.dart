@@ -14,44 +14,30 @@ class DataHandler {
 
   Future<List<Daily>> getStoredDailies(DateTime lastDisplayedDate) async {
     //dbHelper.deleteAll();
-    //dbHelper.deleteDatabase();
+    dbHelper.deleteDatabase();
     var listOfMaps = await dbHelper.query10Rows(lastDisplayedDate);
-    var listOfDailies =
-        listOfMaps.map((data) => _createDailyFromMap(data)).toList();
-    /*
-    for (Daily daily in listOfDailies) {
-      print('displayed: ${daily.date}');
-    }
-    var allRows = await dbHelper.queryAllRows();
-    for (var row in allRows) {
-      print('all: ${row["date"]}');
-    }
-    */
-    return listOfDailies;
+    listOfMaps.map((data) => _streamDailyFromMap(data));
   }
 
-  Future<List<Daily>> getNewDailies(int page) async {
-    List<Daily> returnList = List();
+  Future<void> getNewDailies(int page) async {
     List<String> links = await _scraper.getLinks(page);
     if (!(links == null)) {
       for (String link in links) {
         _scraper
             .getDaily(link)
             .then((onValue) => dataHandler.putDataToDb(onValue))
-            .then((onValue) => {dailyBloc.streamDaily(onValue)})
-            .then((onValue) => returnList.addAll(onValue));
+            .then((onValue) => dailyBloc.streamDaily(onValue));
       }
     }
-    return returnList;
   }
 
-  Daily _createDailyFromMap(Map<String, dynamic> map) {
-    return Daily.fromMap(map);
+  void _streamDailyFromMap(Map<String, dynamic> map) {
+    dailyBloc.streamDaily(Daily.fromMap(map));
   }
 
   Future<List<Daily>> loadDailies(DateTime lastDisplayedDate) async {
     if (lastDisplayedDate == null) {
-      return getNewDailies(_scraperPage);
+      return null; // getNewDailies(_scraperPage);
     } else {
       DateTime prewDay = lastDisplayedDate.add(Duration(days: -1));
       List<Map<String, dynamic>> next = await dbHelper.queryByDate(prewDay);
@@ -59,7 +45,7 @@ class DataHandler {
         return await getStoredDailies(lastDisplayedDate);
       } else {
         _scraperPage += 11;
-        return getNewDailies(_scraperPage);
+        return null; // getNewDailies(_scraperPage);
       }
     }
   }
