@@ -21,7 +21,7 @@ class DataHandler {
 
   Future<void> getNewDailies(int page) async {
     List<String> links = await _scraper.getLinks(page);
-    if (!(links == null)) {
+    if (links != null) {
       for (String link in links) {
         _scraper
             .getDaily(link)

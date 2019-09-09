@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:szeretet_foldje/blocs/daily_bloc.dart';
 import 'package:szeretet_foldje/data/data_handler.dart';
 import '../models/daily.dart';
 import 'package:url_launcher/url_launcher.dart';
@@ -16,10 +17,12 @@ class DailyCardsState extends State<DailyCards> {
   PageController _pageController =
       PageController(viewportFraction: 0.9, initialPage: 0);
   List<Daily> dailies = List<Daily>();
-  List<Widget> _dailieViews = List();
 
   @override
   void initState() {
+    //TODO: collect new AND OLD automatically.
+    _updateOnStreamEvent();
+    dataHandler.getNewDailies(0);
     _pageController.addListener(() => {
           if (_pageController.position.pixels ==
               _pageController.position.maxScrollExtent)
@@ -68,7 +71,12 @@ class DailyCardsState extends State<DailyCards> {
 
   void _addOrUpdateDaily(Daily onData) {
     setState(() {
-      Daily pair = dailies.firstWhere((daily) => daily.date == onData.date);
+      Daily pair;
+      try {
+        pair = dailies.firstWhere((daily) => daily.date == onData.date);
+      } catch (error) {
+        pair = null;
+      }
       if (pair != null) {
         dailies[dailies.indexOf(pair)] = onData;
       } else {
@@ -144,15 +152,22 @@ class DailyCardsState extends State<DailyCards> {
       return Container(
         margin: EdgeInsets.fromLTRB(0, 20, 0, 10),
         height: MediaQuery.of(context).size.height * 0.7,
-        child: PageView(
+        child: PageView.builder(
+          itemCount: dailies.length,
           scrollDirection: Axis.horizontal,
           controller: _pageController,
-          children: _dailieViews,
+          itemBuilder: (BuildContext context, int index) {
+            return _cardBuilder(dailies[index]);
+          },
         ),
       );
     } else {
       return _isThereInternet();
     }
+  }
+
+  void _updateOnStreamEvent() {
+    dailyBloc.getDailies.listen((onData) => _addOrUpdateDaily(onData));
   }
 
   Widget _isThereInternet() {
