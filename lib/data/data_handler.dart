@@ -35,17 +35,17 @@ class DataHandler {
     dailyBloc.streamDaily(Daily.fromMap(map));
   }
 
-  Future<List<Daily>> loadDailies(DateTime lastDisplayedDate) async {
+  Future<void> loadDailies(DateTime lastDisplayedDate) async {
     if (lastDisplayedDate == null) {
-      return null; // getNewDailies(_scraperPage);
+      getNewDailies(_scraperPage);
     } else {
       DateTime prewDay = lastDisplayedDate.add(Duration(days: -1));
       List<Map<String, dynamic>> next = await dbHelper.queryByDate(prewDay);
       if (next.isNotEmpty) {
-        return await getStoredDailies(lastDisplayedDate);
+        getStoredDailies(lastDisplayedDate);
       } else {
         _scraperPage += 11;
-        return null; // getNewDailies(_scraperPage);
+        getNewDailies(_scraperPage);
       }
     }
   }

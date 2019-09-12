@@ -20,9 +20,8 @@ class DailyCardsState extends State<DailyCards> {
 
   @override
   void initState() {
-    //TODO: collect new AND OLD automatically.
     _updateOnStreamEvent();
-    dataHandler.getNewDailies(0);
+    dataHandler.getNewDailies(null);
     _pageController.addListener(() => {
           if (_pageController.position.pixels ==
               _pageController.position.maxScrollExtent)
@@ -38,7 +37,7 @@ class DailyCardsState extends State<DailyCards> {
 
   _displayMoreDailies() async {
     int originalLength = dailies.length;
-    List<Daily> newDailies = await dataHandler.loadDailies(dailies.last.date);
+    List<Daily> newDailies = await dailyBloc.getDailies.toList();
     if (newDailies != null) {
       for (Daily daily in newDailies) {
         dailies.retainWhere((d) => d.date != daily.date);
