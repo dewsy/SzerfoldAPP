@@ -5,6 +5,7 @@ import '../models/daily.dart';
 import 'dart:io';
 
 class Scraper {
+  String SEPARATOR = '---';
   String _subtractLink(String outerHtml) {
     List<String> split = outerHtml.split('"');
     return "http://szeretetfoldje.hu" + split[1];
@@ -52,7 +53,10 @@ class Scraper {
         String title = document.querySelector('.item-page-title a').innerHtml;
         DateTime date = _convertToDate(
             document.querySelector('.published').text.trim().substring(11));
-        String htmlString = document.querySelector("#comp-wrap p").outerHtml;
+        String htmlString = document
+            .querySelector("#comp-wrap p")
+            .outerHtml
+            .split(SEPARATOR)[0];
         return Daily(title, date, htmlString);
       } else {
         throw Exception('Failed to load post');
