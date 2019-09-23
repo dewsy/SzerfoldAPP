@@ -25,7 +25,6 @@ class DataHandler {
   }
 
   Future<void> loadDailies(DateTime lastDisplayedDate) async {
-    //dbHelper.deleteDatabase();
     if (lastDisplayedDate != null) {
       var listOfMaps =
           await dbHelper.query11Rows(lastDisplayedDate.add(Duration(days: -1)));

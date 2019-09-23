@@ -5,7 +5,7 @@ import '../models/daily.dart';
 import 'dart:io';
 
 class Scraper {
-  String SEPARATOR = '---';
+  static const String SEPARATOR = '---';
   String _subtractLink(String outerHtml) {
     List<String> split = outerHtml.split('"');
     return "http://szeretetfoldje.hu" + split[1];
@@ -14,7 +14,7 @@ class Scraper {
   Future<List<String>> getLinks(int start) async {
     if (await _isNetAvailable()) {
       Response response = await Client()
-          .get('http://szeretetfoldje.hu/index.php/a-mai-napra?start=${start}');
+          .get('http://szeretetfoldje.hu/index.php/a-mai-napra?start=$start');
       if (response.statusCode == 200) {
         var document = parse(response.body);
         List<Element> elements =
@@ -26,7 +26,6 @@ class Scraper {
         return dailies;
       } else {
         throw Exception('Failed to load post');
-        //TODO: Implement response!
       }
     }
     return null;
