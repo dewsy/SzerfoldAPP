@@ -24,20 +24,26 @@ class DataHandler {
     }
   }
 
-
   Future<void> loadDailies(DateTime lastDisplayedDate) async {
+    //dbHelper.deleteDatabase();
     if (lastDisplayedDate != null) {
-      var listOfMaps = await dbHelper.query11Rows(lastDisplayedDate);
+      var listOfMaps =
+          await dbHelper.query11Rows(lastDisplayedDate.add(Duration(days: -1)));
       if (listOfMaps.isNotEmpty) {
-        listOfMaps.forEach((data) => dailyBloc.streamDaily(Daily.fromMap(data)));
+        listOfMaps
+            .forEach((data) => dailyBloc.streamDaily(Daily.fromMap(data)));
       } else {
-        _scraperPage += 11;
+        _scraperPage = _getPaginationNumber(lastDisplayedDate);
         getNewDailies(_scraperPage);
       }
     } else {
       getNewDailies(0);
     }
   }
+}
+
+int _getPaginationNumber(DateTime lastDisplayed) {
+  return DateTime.now().difference(lastDisplayed).inDays;
 }
 
 final dataHandler = DataHandler();

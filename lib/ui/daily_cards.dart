@@ -6,6 +6,7 @@ import 'package:url_launcher/url_launcher.dart';
 import 'package:flutter_html/flutter_html.dart';
 import 'package:connectivity/connectivity.dart';
 import 'package:fluttertoast/fluttertoast.dart';
+import 'package:share/share.dart';
 
 class DailyCards extends StatefulWidget {
   @override
@@ -107,7 +108,7 @@ class DailyCardsState extends State<DailyCards> {
             child: Center(
               child: Container(
                   padding: EdgeInsets.only(top: 3),
-                  child: Column(
+                  child: Stack(children: <Widget>[ Column(
                     children: <Widget>[
                       Padding(
                           padding: EdgeInsets.fromLTRB(0, 20, 0, 20),
@@ -124,8 +125,14 @@ class DailyCardsState extends State<DailyCards> {
                           fontSize: 17,
                         ),
                         padding: EdgeInsets.all(20),
-                      )))
-                    ],
+                      ))),
+                    ],),
+                    Align(
+                      alignment: Alignment.bottomRight,
+                      child:IconButton(
+                        icon: Icon(Icons.share),
+                        onPressed: () => Share.share('Egy mondat az evangéliumból, elmélkedés és fohász: ${daily.url}'),
+                    ))]
                   )),
             )));
   }

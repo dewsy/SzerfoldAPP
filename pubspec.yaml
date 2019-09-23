@@ -7,6 +7,7 @@ environment:
   sdk: ">=2.2.2 <3.0.0"
 
 dependencies:
+  share:
   fluttertoast:
   stream_transform:
   path_provider: ^1.1.0

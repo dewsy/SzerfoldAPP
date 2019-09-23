@@ -5,7 +5,7 @@ import 'package:sqflite/sqflite.dart';
 import 'package:path_provider/path_provider.dart';
 
 class DatabaseHelper {
-  static final _databaseName = "DailyDB2.db";
+  static final _databaseName = "DailyDB3.db";
   static final _databaseVersion = 1;
 
   static final table = 'dailies';
@@ -14,6 +14,7 @@ class DatabaseHelper {
   static final columnTitle = 'title';
   static final columnDate = 'date';
   static final columnHtml = 'html';
+  static final columnUrl = 'url';
 
   // make this a singleton class
   DatabaseHelper._privateConstructor();
@@ -42,8 +43,8 @@ class DatabaseHelper {
             $columnId INTEGER PRIMARY KEY AUTOINCREMENT,
             $columnTitle TEXT,
             $columnDate INTEGER NOT NULL UNIQUE,
-            $columnHtml TEXT
-          )
+            $columnHtml TEXT,
+            $columnUrl TEXT)
           ''');
   }
 

@@ -57,7 +57,7 @@ class Scraper {
             .querySelector("#comp-wrap p")
             .outerHtml
             .split(SEPARATOR)[0];
-        return Daily(title, date, htmlString);
+        return Daily(title, date, htmlString, link);
       } else {
         throw Exception('Failed to load post');
         //TODO implement no response
