@@ -63,7 +63,7 @@ class DatabaseHelper {
     return await db.query(table, orderBy: '$columnDate DESC');
   }
 
-  Future<List<Map<String, dynamic>>> query10Rows(DateTime date) async {
+  Future<List<Map<String, dynamic>>> query11Rows(DateTime date) async {
     Database db = await instance.database;
     var result = await db.query(table,
         where: '$columnDate <= ?',

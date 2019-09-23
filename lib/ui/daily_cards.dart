@@ -5,6 +5,7 @@ import '../models/daily.dart';
 import 'package:url_launcher/url_launcher.dart';
 import 'package:flutter_html/flutter_html.dart';
 import 'package:connectivity/connectivity.dart';
+import 'package:fluttertoast/fluttertoast.dart';
 
 class DailyCards extends StatefulWidget {
   @override
@@ -20,8 +21,9 @@ class DailyCardsState extends State<DailyCards> {
 
   @override
   void initState() {
+    dataHandler.getNewDailies(0);
     _updateOnStreamEvent();
-    dataHandler.getNewDailies(null);
+    dataHandler.loadDailies(DateTime.now());
     _pageController.addListener(() => {
           if (_pageController.position.pixels ==
               _pageController.position.maxScrollExtent)
@@ -36,36 +38,18 @@ class DailyCardsState extends State<DailyCards> {
   }
 
   _displayMoreDailies() async {
-    int originalLength = dailies.length;
-    List<Daily> newDailies = await dailyBloc.getDailies.toList();
-    if (newDailies != null) {
-      for (Daily daily in newDailies) {
-        dailies.retainWhere((d) => d.date != daily.date);
-        dailies.add(daily);
-      }
-      _dailySorter();
-      if (originalLength >= dailies.length) {
-        _displayMoreDailies();
-      }
-      setState(() {});
-    }
+    dataHandler.loadDailies(dailies.last.date);
+    Fluttertoast.showToast(
+      msg: "Újabb üzenetek betöltése",
+      toastLength: Toast.LENGTH_SHORT,
+      gravity: ToastGravity.BOTTOM,
+    );
   }
 
   @override
   void dispose() {
     _pageController.dispose();
     super.dispose();
-  }
-
-  void _collectDailies() async {
-    var stored = await dataHandler.getStoredDailies(DateTime.now());
-    setState(() {
-      for (Daily daily in stored) {
-        dailies.retainWhere((d) => d.date != daily.date);
-        dailies.add(daily);
-      }
-      _dailySorter();
-    });
   }
 
   void _addOrUpdateDaily(Daily onData) {
@@ -177,7 +161,6 @@ class DailyCardsState extends State<DailyCards> {
         switch (snapshot.data) {
           case ConnectivityResult.wifi:
           case ConnectivityResult.mobile:
-            dataHandler.loadDailies(null);
             return Container(
                 margin: EdgeInsets.fromLTRB(0, 20, 0, 10),
                 height: MediaQuery.of(context).size.height * 0.7,
